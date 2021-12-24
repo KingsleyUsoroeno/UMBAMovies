@@ -54,5 +54,5 @@ fun MovieOption(
 @Preview
 @Composable
 fun MovieOptionPreview() {
-    MovieOption(onClick = { }, title = "Popular Movie")
+    MovieOption(title = "Popular Movie") {}
 }

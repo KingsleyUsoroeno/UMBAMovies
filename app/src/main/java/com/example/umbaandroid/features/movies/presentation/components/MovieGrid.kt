@@ -17,7 +17,7 @@ fun MovieGrid(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
     movies: List<Movie> = listOf(),
-    onItemClick: () -> Unit
+    onItemClick: (id: Int) -> Unit
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
@@ -29,6 +29,7 @@ fun MovieGrid(
                 modifier = Modifier.padding(8.dp),
                 imageUrl = movies[it].imageUrl,
                 movieName = movies[it].title,
+                movieId = movies[it].id,
                 onClick = onItemClick
             )
         }

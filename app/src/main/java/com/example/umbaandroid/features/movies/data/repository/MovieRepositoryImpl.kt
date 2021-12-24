@@ -29,7 +29,6 @@ class MovieRepositoryImpl @Inject constructor(
     private val upcomingMoviesDao by lazy { movieDatabase.upcomingMoviesDao }
     private val latestMoviesDao by lazy { movieDatabase.latestMoviesDao }
 
-
     override suspend fun findPopularMovieById(id: Int): Movie? {
         val popularMovieEntity = popularMoviesDao.findMovieById(id)
         return popularMovieEntity?.let { popularMovieEntityMapper.mapToModel(it) }
@@ -47,29 +46,23 @@ class MovieRepositoryImpl @Inject constructor(
 
     override fun fetchPopularMovies(apiKey: String): Flow<List<Movie>> {
         return flow {
-            val cachedMovieEntities = popularMoviesDao.getPopularMovies()
-            emit(popularMovieEntityMapper.mapToModelList(cachedMovieEntities))
+            val cachedPopularMovies = popularMoviesDao.getPopularMovies()
+            emit(popularMovieEntityMapper.mapToModelList(cachedPopularMovies))
             val moviesResponse = movieApiService.getPopularMovies(apiKey = apiKey)
             val popularMovies = popularMovieDtoMapper.mapModelList(moviesResponse.movies)
             emit(popularMovieEntityMapper.mapToModelList(popularMovies))
-            popularMoviesDao.insertAndDeleteInTransaction(
-                oldEntity = cachedMovieEntities,
-                newEntity = popularMovies
-            )
+            popularMoviesDao.insertAndDeleteInTransaction(newEntity = popularMovies)
         }
     }
 
     override fun fetchUpcomingMovies(apiKey: String): Flow<List<Movie>> {
         return flow {
-            val movieEntities = upcomingMoviesDao.getUpcomingMovies()
-            emit(upcomingMovieEntityMapper.mapToModelList(movieEntities))
+            val cachedUpcomingMovies = upcomingMoviesDao.getUpcomingMovies()
+            emit(upcomingMovieEntityMapper.mapToModelList(cachedUpcomingMovies))
             val movieResponse = movieApiService.getUpcomingMovies(apiKey = apiKey)
             val upcomingMovies = upcomingMovieDtoMapper.mapModelList(movieResponse.movies)
             emit(upcomingMovieEntityMapper.mapToModelList(upcomingMovies))
-            upcomingMoviesDao.insertAndDeleteInTransaction(
-                oldEntity = movieEntities,
-                newEntity = upcomingMovies
-            )
+            upcomingMoviesDao.insertAndDeleteInTransaction(newEntity = upcomingMovies)
         }
     }
 
@@ -80,11 +73,7 @@ class MovieRepositoryImpl @Inject constructor(
             val movieDto = movieApiService.getLatestMovie(apiKey = apiKey)
             val latestMovies = latestMovieDtoMapper.mapFromModel(movieDto)
             emit(latestMovieEntityMapper.mapToModelList(listOf(latestMovies)))
-            latestMoviesDao.insertAndDeleteInTransaction(
-                oldEntity = cachedLatestMovie,
-                newEntity = listOf(latestMovies)
-            )
+            latestMoviesDao.insertAndDeleteInTransaction(newEntity = listOf(latestMovies))
         }
     }
-
 }

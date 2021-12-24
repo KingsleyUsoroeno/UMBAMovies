@@ -12,5 +12,7 @@ data class Movie(
     val title: String,
     val voteAverage: Double
 ) {
-    val imageUrl: String get() = "https://image.tmdb.org/t/p/w500/$posterPath"
+    val imageUrl: String
+        get() =
+            if (posterPath.isEmpty()) "" else "https://image.tmdb.org/t/p/w500/$posterPath"
 }

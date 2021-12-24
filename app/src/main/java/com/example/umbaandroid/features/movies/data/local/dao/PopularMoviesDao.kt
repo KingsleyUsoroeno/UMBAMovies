@@ -19,21 +19,14 @@ interface PopularMoviesDao : BaseDao<PopularMovieEntity> {
     @Query("SELECT * FROM PopularMovies WHERE id = :id LIMIT 1")
     suspend fun findMovieById(id: Int): PopularMovieEntity?
 
-    @Transaction
-    suspend fun insertAndDeleteInTransaction(
-        oldEntity: PopularMovieEntity,
-        newEntity: PopularMovieEntity
-    ) {
-        delete(entity = oldEntity)
-        insert(entity = newEntity)
-    }
+    @Query("DELETE FROM PopularMovies")
+    suspend fun clearTable()
 
     @Transaction
     suspend fun insertAndDeleteInTransaction(
-        oldEntity: List<PopularMovieEntity>,
         newEntity: List<PopularMovieEntity>
     ) {
-        delete(entities = oldEntity)
+        clearTable()
         insert(entities = newEntity)
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.umbaandroid.features.movies.presentation.Screen
+import com.example.umbaandroid.features.movies.presentation.components.LoadingUi
 import com.example.umbaandroid.features.movies.presentation.components.MovieGrid
 import com.example.umbaandroid.features.movies.presentation.state.UiState
 
@@ -33,17 +34,21 @@ fun PopularMoviesScreen(
             }
         }) { paddingValues ->
 
-            val uiState by viewModel.uiState.collectAsState()
+            val uiState by viewModel.uiState.collectAsState(initial = UiState.Idle)
 
             when (uiState) {
                 is UiState.Idle -> {
                 }
                 is UiState.Loading -> {
+                    println("Am loading")
+                    LoadingUi()
                 }
                 is UiState.Loaded -> {
                     val movies = (uiState as UiState.Loaded).movies
-                    MovieGrid(paddingValues = paddingValues, movies = movies) {
-                        navController.navigate(Screen.MovieDetailScreen.withArgs("Popular Movies"))
+                    MovieGrid(paddingValues = paddingValues, movies = movies) { movieId ->
+                        val destination = Screen.MovieDetailScreen
+                            .withArgs("Popular Movies", movieId)
+                        navController.navigate(destination)
                     }
                 }
                 is UiState.Error -> {

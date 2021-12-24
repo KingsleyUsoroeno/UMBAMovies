@@ -9,10 +9,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class PopularMoviesScreenViewModel @Inject constructor(
-    private val movieRepository: MovieRepository
+    private val movieRepository: MovieRepository,
+    @Named(value = "apiKey") private val apiKey: String
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
@@ -25,7 +27,7 @@ class PopularMoviesScreenViewModel @Inject constructor(
     private fun fetchPopularMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = UiState.Loading
-            movieRepository.fetchPopularMovies(apiKey = "98d4ab8983c3a5727df9ab4f565f5f4a")
+            movieRepository.fetchPopularMovies(apiKey = apiKey)
                 .onEach { _uiState.value = UiState.Loaded(it) }
                 .catch {
                     val errorMessage = it.message ?: "Something went wrong, please try again later"

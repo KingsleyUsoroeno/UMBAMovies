@@ -17,6 +17,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -68,4 +69,9 @@ object MoviesModule {
             baseUrl("https://api.themoviedb.org/")
         }.build()
     }
+
+    @Singleton
+    @Provides
+    @Named("apiKey")
+    fun provideAuthToken(): String = "98d4ab8983c3a5727df9ab4f565f5f4a"
 }

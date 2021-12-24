@@ -41,29 +41,37 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.HomeScreen.routeName) {
                             HomeScreen(navController = navController)
                         }
-                        composable(route = Screen.MovieDetailScreen.routeName + "/{movieType}",
+
+                        composable(route = Screen.MovieDetailScreen.routeName
+                                + "/{movieType}/{movieId}",
                             arguments = listOf(
-                                navArgument("id") {
+                                navArgument("movieType") {
                                     type = NavType.StringType
                                     defaultValue = ""
                                     nullable = false
+                                },
+                                navArgument("movieId") {
+                                    type = NavType.IntType
+                                    defaultValue = 0
+                                    nullable = false
                                 }
-                            )) {
+                            )) { backStackEntry ->
 
-                            val movieType = it.arguments?.getString("movieType") ?: ""
-                            MovieDetailScreen(movieType = movieType)
+                            val movieType = backStackEntry.arguments?.getString("movieType") ?: ""
+                            val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+                            MovieDetailScreen(movieType = movieType, id = movieId)
                         }
 
                         composable(Screen.LatestMovieScreen.routeName) {
-                            LatestMovieScreen(navController = navController)
+                            LatestMovieScreen(navController)
                         }
 
                         composable(Screen.PopularMovieScreen.routeName) {
-                            PopularMoviesScreen(navController = navController)
+                            PopularMoviesScreen(navController)
                         }
 
                         composable(Screen.UpcomingMovieScreen.routeName) {
-                            UpcomingMoviesScreen(navController = navController)
+                            UpcomingMoviesScreen(navController)
                         }
                     }
                 }

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.umbaandroid.ui.theme.Shapes
@@ -25,26 +25,22 @@ fun MovieCard(
     modifier: Modifier = Modifier,
     imageUrl: String,
     movieName: String,
-    onClick: () -> Unit
+    movieId: Int,
+    onClick: (id: Int) -> Unit
 ) {
     Surface(
         modifier = modifier
             .size(width = 160.dp, height = 210.dp)
-            .clickable(onClick = onClick),
+            .clickable { onClick(movieId) },
         shape = Shapes.small,
         border = BorderStroke(width = 1.dp, color = Color.LightGray)
     ) {
         Column {
             GlideImage(
                 imageModel = imageUrl,
-                // Crop, Fit, Inside, FillHeight, FillWidth, None
                 contentScale = ContentScale.Crop,
                 // shows an image with a circular revealed animation.
                 circularReveal = CircularReveal(duration = 250),
-                // shows a placeholder ImageBitmap when loading.
-                //placeHolder = ImageBitmap.imageResource(R.drawable.placeholder),
-                // shows an error ImageBitmap when the request failed.
-                //error = ImageBitmap.imageResource(R.drawable.error),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp),
@@ -76,17 +72,12 @@ fun MovieCard(
                 text = movieName,
                 modifier = Modifier
                     .align(alignment = Alignment.CenterHorizontally)
-                    //.padding(bottom = 5.dp)
-                    .padding(horizontal = 2.dp),
+                    .padding(horizontal = 4.dp),
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun MovieCardPreview() {
-
 }
