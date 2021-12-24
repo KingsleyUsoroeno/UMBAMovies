@@ -82,10 +82,8 @@ object Dependencies {
     }
 
     object DI {
-
         private const val hiltViewModelVersion = "1.0.0-alpha03"
         private const val hiltCompilerVersion = "1.0.0"
-        private const val hiltLifecycleViewModelVersion = "1.0.0-alpha01"
 
         object AnnotationProcessor {
             const val jetpackHiltCompiler: String =
@@ -109,7 +107,6 @@ object Dependencies {
     }
 
     object Navigation : Libraries {
-
         private const val navigation = "2.4.0-rc01"
 
         private const val composeNavigation = "androidx.navigation:navigation-compose:$navigation"

@@ -42,22 +42,18 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 MovieOption(title = "Latest Movies") {
-                    navigateToMovieList(navController = navController, arg = "Latest")
+                    navController.navigate(Screen.LatestMovieScreen.routeName)
                 }
                 MovieOption(title = "Upcoming Movies") {
-                    navigateToMovieList(navController = navController, arg = "Upcoming")
+                    navController.navigate(Screen.UpcomingMovieScreen.routeName)
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
             MovieOption(title = "Popular Movies") {
-                navigateToMovieList(navController = navController, arg = "Popular")
+                navController.navigate(Screen.PopularMovieScreen.routeName)
             }
         }
     }
-}
-
-private fun navigateToMovieList(navController: NavController, arg: String) {
-    navController.navigate(Screen.MovieListScreen.withArgs(arg))
 }
 
 @Preview

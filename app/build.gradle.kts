@@ -92,4 +92,8 @@ dependencies {
     implementation(DI.hiltLifecycleViewModel)
     implementation(DI.lifeCycleViewModel)
     kapt(DI.hiltViewModelCompiler)
+
+    implementation("com.github.skydoves:landscapist-glide:1.4.4")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-rc02")
+
 }
