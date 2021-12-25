@@ -8,11 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.skydoves.landscapist.glide.GlideImage
+import com.example.umbaandroid.features.movies.presentation.components.MovieImage
 
 @Composable
 fun MovieDetailScreen(
@@ -31,13 +30,11 @@ fun MovieDetailScreen(
             color = MaterialTheme.colors.background
         ) {
             Column {
-                GlideImage(
-                    imageModel = nonNullMovie.imageUrl,
-                    contentDescription = "Movie poster",
+                MovieImage(
+                    imageUrl = nonNullMovie.imageUrl,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp),
-                    contentScale = ContentScale.Crop
+                        .height(350.dp)
                 )
 
                 Column(
@@ -46,16 +43,14 @@ fun MovieDetailScreen(
                         .padding(top = 20.dp)
                 ) {
                     Text(
-                        text = nonNullMovie.title,
+                        text = nonNullMovie.title.ifEmpty { "N/A" },
                         style = MaterialTheme.typography.h5,
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
 
-                    Text(text = "Story Line", style = MaterialTheme.typography.h5)
-                    Spacer(modifier = Modifier.height(20.dp))
                     Text(
                         text = nonNullMovie.overview,
-                        style = MaterialTheme.typography.body1
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(top = 20.dp)
                     )
                 }
             }

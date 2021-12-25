@@ -1,5 +1,6 @@
 package com.example.umbaandroid.features.movies.data.repository
 
+import com.example.umbaandroid.core.util.Resource
 import com.example.umbaandroid.features.movies.data.local.MovieDatabase
 import com.example.umbaandroid.features.movies.data.local.mapper.latest_movies.LatestMovieEntityMapper
 import com.example.umbaandroid.features.movies.data.local.mapper.popular_movie.PopularMovieEntityMapper
@@ -44,36 +45,101 @@ class MovieRepositoryImpl @Inject constructor(
         return latestMovie?.let { latestMovieEntityMapper.mapToModel(it) }
     }
 
-    override fun fetchPopularMovies(apiKey: String): Flow<List<Movie>> {
-        return flow {
-            val cachedPopularMovies = popularMoviesDao.getPopularMovies()
-            emit(popularMovieEntityMapper.mapToModelList(cachedPopularMovies))
-            val moviesResponse = movieApiService.getPopularMovies(apiKey = apiKey)
-            val popularMovies = popularMovieDtoMapper.mapModelList(moviesResponse.movies)
-            emit(popularMovieEntityMapper.mapToModelList(popularMovies))
-            popularMoviesDao.insertAndDeleteInTransaction(newEntity = popularMovies)
-        }
+    override fun fetchPopularMovies(apiKey: String): Flow<Resource<List<Movie>>> {
+        return flowResource(
+            getCachedMovie = {
+                val cacheMovieEntity = popularMoviesDao.getPopularMovies()
+                popularMovieEntityMapper.mapToModelList(cacheMovieEntity)
+            },
+            getMovieDto = {
+                val movieResponse = movieApiService.getPopularMovies(apiKey = apiKey)
+                val movieDto = popularMovieDtoMapper.mapModelList(movieResponse.movies)
+                popularMovieEntityMapper.mapToModelList(movieDto)
+            },
+            insertMovie = {
+                popularMoviesDao.insertAndDeleteInTransaction(
+                    popularMovieEntityMapper.mapToEntityList(
+                        it
+                    )
+                )
+            }
+        )
     }
 
-    override fun fetchUpcomingMovies(apiKey: String): Flow<List<Movie>> {
-        return flow {
-            val cachedUpcomingMovies = upcomingMoviesDao.getUpcomingMovies()
-            emit(upcomingMovieEntityMapper.mapToModelList(cachedUpcomingMovies))
-            val movieResponse = movieApiService.getUpcomingMovies(apiKey = apiKey)
-            val upcomingMovies = upcomingMovieDtoMapper.mapModelList(movieResponse.movies)
-            emit(upcomingMovieEntityMapper.mapToModelList(upcomingMovies))
-            upcomingMoviesDao.insertAndDeleteInTransaction(newEntity = upcomingMovies)
-        }
+    override fun fetchUpcomingMovies(apiKey: String): Flow<Resource<List<Movie>>> {
+        return flowResource(
+            getCachedMovie = {
+                val cacheMovieEntity = upcomingMoviesDao.getUpcomingMovies()
+                upcomingMovieEntityMapper.mapToModelList(cacheMovieEntity)
+            },
+            getMovieDto = {
+                val movieResponse = movieApiService.getUpcomingMovies(apiKey = apiKey)
+                val movieDto = upcomingMovieDtoMapper.mapModelList(movieResponse.movies)
+                upcomingMovieEntityMapper.mapToModelList(movieDto)
+            },
+            insertMovie = {
+                upcomingMoviesDao.insertAndDeleteInTransaction(
+                    upcomingMovieEntityMapper.mapToEntityList(
+                        it
+                    )
+                )
+            }
+        )
     }
 
-    override fun fetchLatestMovies(apiKey: String): Flow<List<Movie>> {
+    override fun fetchLatestMovies(apiKey: String): Flow<Resource<List<Movie>>> {
+        return flowResource(
+            getCachedMovie = {
+                val cachedLatestMovies = latestMoviesDao.getLatestMovies()
+                latestMovieEntityMapper.mapToModelList(cachedLatestMovies)
+            },
+            getMovieDto = {
+                val movieResponse = movieApiService.getLatestMovie(apiKey = apiKey)
+                val movieDto = latestMovieDtoMapper.mapFromModel(movieResponse)
+                latestMovieEntityMapper.mapToModelList(listOf(movieDto))
+            },
+            insertMovie = {
+                latestMoviesDao.insertAndDeleteInTransaction(
+                    latestMovieEntityMapper.mapToEntityList(
+                        it
+                    )
+                )
+            }
+        )
+    }
+
+    private fun flowResource(
+        getCachedMovie: () -> List<Movie>,
+        getMovieDto: suspend () -> List<Movie>,
+        insertMovie: suspend (movies: List<Movie>) -> Unit
+    ): Flow<Resource<List<Movie>>> {
         return flow {
-            val cachedLatestMovie = latestMoviesDao.getLatestMovies()
-            emit(latestMovieEntityMapper.mapToModelList(cachedLatestMovie))
-            val movieDto = movieApiService.getLatestMovie(apiKey = apiKey)
-            val latestMovies = latestMovieDtoMapper.mapFromModel(movieDto)
-            emit(latestMovieEntityMapper.mapToModelList(listOf(latestMovies)))
-            latestMoviesDao.insertAndDeleteInTransaction(newEntity = listOf(latestMovies))
+            emit(Resource.Loading<List<Movie>>())
+
+            // Get cached items
+            val cachedMovieEntity: List<Movie> = getCachedMovie()
+            if (cachedMovieEntity.isEmpty()) {
+                emit(Resource.Loading<List<Movie>>())
+            } else {
+                emit(Resource.Success(data = cachedMovieEntity))
+            }
+
+            try {
+                val movieDto: List<Movie> = getMovieDto()
+                emit(Resource.Success(data = movieDto))
+                insertMovie(movieDto)
+            } catch (e: Exception) {
+                if (cachedMovieEntity.isEmpty()) {
+                    emit(
+                        Resource.Error<List<Movie>>(
+                            message = "Oops, something went wrong!",
+                            data = null
+                        )
+                    )
+                } else {
+                    emit(Resource.Success(cachedMovieEntity))
+                }
+            }
         }
     }
 }

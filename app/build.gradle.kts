@@ -75,9 +75,6 @@ android {
 dependencies {
     implementAll(Compose.components)
 
-    testImplementation(Test.robolectric)
-    testImplementation(Test.mockWebServer)
-
     /*Dagger Hilt and HiltViewModel*/
     implementation(DI.daggerHiltAndroid)
     kapt(DI.daggerHiltkapt)
@@ -92,6 +89,12 @@ dependencies {
     implementation(DI.hiltLifecycleViewModel)
     implementation(DI.lifeCycleViewModel)
     kapt(DI.hiltViewModelCompiler)
+
+    debugImplementation(Compose.composeTooling)
+    androidTestImplementation(Test.composeUiTest)
+    androidTestImplementation(Test.espressoCore)
+    testImplementation(Test.mockWebServer)
+    testImplementation(Test.junit)
 
     implementation("com.github.skydoves:landscapist-glide:1.4.4")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-rc02")

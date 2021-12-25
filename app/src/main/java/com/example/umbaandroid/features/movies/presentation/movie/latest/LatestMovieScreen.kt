@@ -11,9 +11,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.umbaandroid.features.movies.presentation.Screen
+import com.example.umbaandroid.features.movies.presentation.components.ErrorUi
 import com.example.umbaandroid.features.movies.presentation.components.LoadingUi
 import com.example.umbaandroid.features.movies.presentation.components.MovieGrid
-import com.example.umbaandroid.features.movies.presentation.state.UiState
 
 
 @Composable
@@ -35,26 +35,25 @@ fun LatestMovieScreen(
             }
         }) { paddingValues ->
 
-            val uiState by viewModel.uiState.collectAsState()
+            val state by viewModel.uiState.collectAsState()
 
-            when (uiState) {
-                is UiState.Idle -> {
+            if (state.isLoading) {
+                LoadingUi()
+
+            } else if (state.isLoading.not() &&
+                state.errorMessage == null && state.movies != null
+            ) {
+                MovieGrid(paddingValues = paddingValues, movies = state.movies!!) { movieId ->
+                    val destination = Screen.MovieDetailScreen
+                        .withArgs("Latest Movies", movieId)
+                    navController.navigate(destination)
                 }
 
-                is UiState.Loading -> {
-                    LoadingUi()
-                }
-
-                is UiState.Loaded -> {
-                    val movies = (uiState as UiState.Loaded).movies
-                    MovieGrid(paddingValues = paddingValues, movies = movies) { id ->
-                        val destination = Screen.MovieDetailScreen
-                            .withArgs("Latest Movies", id)
-                        navController.navigate(destination)
-                    }
-                }
-                is UiState.Error -> {
-                    println("encountered error is ${(uiState as UiState.Error).errorMessage}")
+            } else if (state.isLoading.not() &&
+                state.errorMessage != null && state.movies == null
+            ) {
+                ErrorUi(errorMessage = state.errorMessage!!) {
+                    viewModel.fetchLatestMovies()
                 }
             }
         }

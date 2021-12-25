@@ -36,7 +36,7 @@ object Dependencies {
             "androidx.compose.material:material-icons-core:$compose"
         private const val composeMaterialIconsExtended =
             "androidx.compose.material:material-icons-extended:$compose"
-        private const val composeTooling =
+        const val composeTooling =
             "androidx.compose.ui:ui-tooling:${Config.Version.composeVersion}"
         private const val composePreview =
             "androidx.compose.ui:ui-tooling-preview:${Config.Version.composeVersion}"
@@ -52,7 +52,6 @@ object Dependencies {
                 composeMaterial,
                 composeMaterialIcons,
                 composeMaterialIconsExtended,
-                composeTooling,
                 composePreview,
                 composeUi,
                 composeActivity
@@ -75,10 +74,12 @@ object Dependencies {
         const val truth: String = "com.google.truth:truth:${Versions.truth}"
         const val coroutinesTest: String =
             "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
-        const val robolectric: String = "org.robolectric:robolectric:${Versions.robolectric}"
         const val androidXTestCore = "androidx.test:core:${Versions.androidXTestCore}"
         const val mockWebServer: String =
             "com.squareup.okhttp3:mockwebserver:${Versions.mockWebServer}"
+        const val composeUiTest =
+            "androidx.compose.ui:ui-test-junit4:${Config.Version.composeVersion}"
+        const val espressoCore = "androidx.test.espresso:espresso-core:3.4.0"
     }
 
     object DI {
@@ -102,8 +103,6 @@ object Dependencies {
 
         const val hiltTesting: String =
             "com.google.dagger:hilt-android-testing:${Versions.daggerHiltAndroid}"
-
-
     }
 
     object Navigation : Libraries {
