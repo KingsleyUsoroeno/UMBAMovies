@@ -95,8 +95,10 @@ dependencies {
     androidTestImplementation(Test.espressoCore)
     testImplementation(Test.mockWebServer)
     testImplementation(Test.junit)
+    implementation(Test.truth)
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test:core:1.4.1-alpha03")
 
     implementation("com.github.skydoves:landscapist-glide:1.4.4")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-rc02")
-
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
 }
