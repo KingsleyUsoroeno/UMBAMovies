@@ -3,6 +3,7 @@ package com.example.umbaandroid.features.movies.presentation.movie_detail
 import androidx.lifecycle.ViewModel
 import com.example.umbaandroid.features.movies.domain.model.Movie
 import com.example.umbaandroid.features.movies.domain.repository.MovieRepository
+import com.example.umbaandroid.features.movies.presentation.MovieType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -18,13 +19,13 @@ class MovieDetailScreenViewModel @Inject constructor(
     fun getMovieById(movieType: String, id: Int): Flow<Movie?> {
         return flow {
             when (movieType) {
-                "Popular Movies" -> {
+                MovieType.PopularMovies.name -> {
                     emit(movieRepository.findPopularMovieById(id))
                 }
-                "Upcoming Movies" -> {
+                MovieType.UpcomingMovies.name -> {
                     emit(movieRepository.findUpcomingMovieById(id))
                 }
-                "Latest Movies" -> {
+                MovieType.LatestMovies.name -> {
                     emit(movieRepository.findLatestMovieById(id))
                 }
             }

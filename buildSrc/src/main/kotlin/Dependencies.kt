@@ -25,7 +25,6 @@ object Dependencies {
     }
 
     object Compose : Libraries {
-
         private const val compose = "1.0.0-alpha09"
 
         private const val composeFoundation = "androidx.compose.foundation:foundation:$compose"
@@ -44,6 +43,8 @@ object Dependencies {
             "androidx.compose.ui:ui:${Config.Version.composeVersion}"
         private const val composeActivity =
             "androidx.activity:activity-compose:${Config.Version.composeVersion}"
+        private const val composeConstraintLayout =
+            "androidx.constraintlayout:constraintlayout-compose:1.0.0-rc02"
 
         override val components: List<String>
             get() = listOf(
@@ -54,7 +55,8 @@ object Dependencies {
                 composeMaterialIconsExtended,
                 composePreview,
                 composeUi,
-                composeActivity
+                composeActivity,
+                composeConstraintLayout
             )
     }
 
@@ -121,14 +123,14 @@ object Dependencies {
         private const val loggingInterceptor: String =
             "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
         private const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofitVersion}"
-        private const val retrofitConverter =
+        private const val gsonConverter =
             "com.squareup.retrofit2:converter-gson:${Versions.retrofitVersion}"
 
         override val components: List<String> = listOf(
             okhttp,
             loggingInterceptor,
             retrofit,
-            retrofitConverter
+            gsonConverter
         )
     }
 

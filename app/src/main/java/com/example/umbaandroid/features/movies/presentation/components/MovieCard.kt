@@ -1,7 +1,6 @@
 package com.example.umbaandroid.features.movies.presentation.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -86,11 +85,12 @@ fun MovieImage(modifier: Modifier = Modifier, imageUrl: String) {
             }
         },
         failure = {
-            Image(
-                painter = painterResource(id = R.drawable.img_broken_image),
+            GlideImage(
+                imageModel = painterResource(id = R.drawable.img_broken_image),
+                circularReveal = CircularReveal(duration = 250),
                 contentDescription = "broken image",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .height(150.dp),
             )

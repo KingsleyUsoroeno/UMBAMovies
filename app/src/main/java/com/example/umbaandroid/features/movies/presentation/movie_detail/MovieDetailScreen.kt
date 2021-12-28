@@ -7,10 +7,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.example.umbaandroid.features.movies.presentation.components.MovieImage
 
 @Composable
@@ -20,9 +24,14 @@ fun MovieDetailScreen(
     movieViewModel: MovieDetailScreenViewModel = hiltViewModel()
 ) {
 
-    val movie by movieViewModel.getMovieById(
-        movieType = movieType, id = id
-    ).collectAsState(initial = null)
+    val movieDetailFlow = movieViewModel.getMovieById(movieType, id)
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val movieDetailFlowLifecycleAware = remember(movieDetailFlow, lifecycleOwner) {
+        movieDetailFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+    }
+
+    val movie by movieDetailFlowLifecycleAware.collectAsState(initial = null)
 
     movie?.let { nonNullMovie ->
         Surface(
