@@ -51,7 +51,7 @@ fun MovieOption(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun MovieOptionPreview() {
     MovieOption(title = "Popular Movie") {}
